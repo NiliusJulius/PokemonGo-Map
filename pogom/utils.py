@@ -57,6 +57,15 @@ def get_args():
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
     parser.add_argument('-D', '--db', help='Database filename', default='pogom.db')
     parser.add_argument('-t', '--threads', help='Number of search threads', required=False, type=int, default=5, dest='num_threads')
+    parser.add_argument('-sw', '--slack-webhook', help='slack webhook urlpath /services/.../../...', required=True)
+    parser.add_argument(
+        '-pi',
+        '--pokemon-icons',
+        help='If you have pokemon emojis in Slack, you can give the prefix here, e.g.: \':\' if your emojis are named' +
+             ':pokename:, \':pokemon-:\' if they are named :pokemon-pokename:. :pokeball: is default.',
+        default=':pokeball:')
+    parser.add_argument(
+        '-i', '--ignore', help='Comma-separated list of Pokémon names or IDs to ignore')
     parser.set_defaults(DEBUG=False)
     args = parser.parse_args()
 
