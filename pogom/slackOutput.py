@@ -24,7 +24,7 @@ def outputToSlack(id,encounter_id,lat,lng,itime):
         return
             
     if args.pokemon_icons != ':pokeball:':
-        user_icon = args.pokemon_icons + pokemon_name + ':'
+        user_icon = args.pokemon_icons + pokemon_name.lower() + ':'
     else:
         user_icon = ':pokeball:'
 

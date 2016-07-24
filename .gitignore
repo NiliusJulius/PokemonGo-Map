@@ -9,3 +9,4 @@ static/dist/
 node_modules/
 venv/
 run.bat
+run_multiple.bat
