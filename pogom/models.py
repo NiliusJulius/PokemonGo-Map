@@ -118,7 +118,6 @@ def parse_map(map_dict, iteration_num, step, step_location):
             d_t = datetime.utcfromtimestamp(
                 (p['last_modified_timestamp_ms'] +
                  p['time_till_hidden_ms']) / 1000.0)
-            d_t = d_t + timedelta(hours=2)
             printPokemon(p['pokemon_data']['pokemon_id'],p['latitude'],p['longitude'],d_t)
             pokemons[p['encounter_id']] = {
                 'encounter_id': b64encode(str(p['encounter_id'])),

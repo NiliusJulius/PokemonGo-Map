@@ -1,6 +1,6 @@
 from .utils import get_pokemon_name
 from pogom.utils import get_args
-from datetime import datetime
+from datetime import datetime, timedelta
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 
 import httplib
@@ -52,7 +52,7 @@ def calculate_initial_compass_bearing(latd1, lond1, latd2, lond2):
  
 def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
 
-    if itime < datetime.now():
+    if itime < (datetime.now() - timedelta(hours=2)):
         return
 
     slack_webhook_urlpath = str(args.slack_webhook)
@@ -81,7 +81,7 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
         compass_text = "Zuid-Oost"
     else: compass_text = "Noord-Oost"
     
-    time_till_disappears = itime - datetime.now()
+    time_till_disappears = itime - datetime.now() - timedelta(hours=2)
     disappear_hours, disappear_remainder = divmod(time_till_disappears.seconds, 3600)
     disappear_minutes, disappear_seconds = divmod(disappear_remainder, 60)
     disappear_minutes = str(disappear_minutes)
@@ -96,7 +96,7 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
     #print loc_dic['results'][0]['address_components'][1]['long_name']
     text = "<http://maps.google.com/maps?q=loc:" + str(lat) + "," + str(lng) + \
             "|" + '{0:.2f}'.format(distance) + \
-            " m> afstand, in richting " + compass_text + ", tot: " + disappear_time + \
+            " m> afstand tot basiliek, in richting " + compass_text + ", tot: " + disappear_time + \
             " (" + disappear_minutes + ":" + disappear_seconds + ")!"
             
     data = urllib.urlencode({'payload': '{"username": "' + pokemon_name + '", '
