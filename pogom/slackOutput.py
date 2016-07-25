@@ -1,7 +1,7 @@
 from .utils import get_pokemon_name
 from pogom.utils import get_args
 from datetime import datetime
-from math import radians, cos, sin, asin, sqrt
+from math import radians, cos, sin, asin, sqrt, atan2, degrees
 
 import httplib
 import urllib
@@ -12,7 +12,6 @@ args = get_args()
 ignore = []
 if args.ignore:
     ignore = [i.lower().strip() for i in args.ignore.split(',')]
-alreadyseen = {}
  
 def lonlat_to_meters(lat1, lon1, lat2, lon2):
     """
@@ -29,15 +28,40 @@ def lonlat_to_meters(lat1, lon1, lat2, lon2):
     # earth radius in meters: 6378100
     m = 6378100 * c
     return m
+	
+def calculate_initial_compass_bearing(latd1, lond1, latd2, lond2):
+
+    lat1 = radians(latd1)
+    lat2 = radians(latd2)
+
+    diffLong = radians(lond1 - lond2)
+
+    x = sin(diffLong) * cos(lat2)
+    y = cos(lat1) * sin(lat2) - (sin(lat1)
+            * cos(lat2) * cos(diffLong))
+
+    initial_bearing = atan2(x, y)
+
+    # Now we have the initial bearing but math.atan2 return values
+    # from -180 to + 180 which is not what we want for a compass bearing
+    # The solution is to normalize the initial bearing as shown below
+    initial_bearing = degrees(initial_bearing)
+    compass_bearing = (initial_bearing + 360) % 360
+
+    return compass_bearing
  
-def outputToSlack(id,encounter_id,lat,lng,itime):
+def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
+
+    if itime < datetime.now():
+        return
+
     slack_webhook_urlpath = str(args.slack_webhook)
     pokemon_name = get_pokemon_name(id)
     if args.ignore:
         if pokemon_name.lower() in ignore or id in ignore:
             return
 
-    if encounter_id in alreadyseen.keys():
+    if encounter_id in enc_ids.keys():
         return
             
     if args.pokemon_icons != ':pokeball:':
@@ -46,10 +70,17 @@ def outputToSlack(id,encounter_id,lat,lng,itime):
         user_icon = ':pokeball:'
     
     loc = [l.strip() for l in args.location.split(',')]
-    #print "heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeej" + str(loc[0])
     distance = lonlat_to_meters(float(loc[0]), float(loc[1]), lat, lng)
-    print distance
-        
+    compass = calculate_initial_compass_bearing(float(loc[0]), float(loc[1]), lat, lng)
+    compass_text = ""
+    if compass < 90:
+        compass_text = "Noord-West"
+    elif compass < 180:
+        compass_text = "Zuid-West"
+    elif compass < 270:
+        compass_text = "Zuid-Oost"
+    else: compass_text = "Noord-Oost"
+    
     time_till_disappears = itime - datetime.now()
     disappear_hours, disappear_remainder = divmod(time_till_disappears.seconds, 3600)
     disappear_minutes, disappear_seconds = divmod(disappear_remainder, 60)
@@ -65,8 +96,9 @@ def outputToSlack(id,encounter_id,lat,lng,itime):
     #print loc_dic['results'][0]['address_components'][1]['long_name']
     text = "<http://maps.google.com/maps?q=loc:" + str(lat) + "," + str(lng) + \
             "|" + '{0:.2f}'.format(distance) + \
-            " m> afstand, tot: " + disappear_time + \
+            " m> afstand, in richting " + compass_text + ", tot: " + disappear_time + \
             " (" + disappear_minutes + ":" + disappear_seconds + ")!"
+            
     data = urllib.urlencode({'payload': '{"username": "' + pokemon_name + '", '
                                         '"icon_emoji": "' + user_icon + '", '
                                         '"text": "' + text + '"}'
@@ -78,8 +110,6 @@ def outputToSlack(id,encounter_id,lat,lng,itime):
     h.request('POST', slack_webhook_urlpath, data, headers)
     r = h.getresponse()
     ack = r.read()
-    
-    alreadyseen[encounter_id] = pokemon_name
     
     
             #"| " + loc_dic['results'][0]['address_components'][1]['long_name'] + \

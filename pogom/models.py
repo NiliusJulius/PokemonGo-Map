@@ -31,6 +31,7 @@ class BaseModel(Model):
                     transform_from_wgs_to_gcj(result['latitude'],  result['longitude'])
         return results
 
+enc_ids = {}
 
 class Pokemon(BaseModel):
     # We are base64 encoding the ids delivered by the api
@@ -52,6 +53,7 @@ class Pokemon(BaseModel):
         pokemons = []
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
+            enc_ids[p['encounter_id']] = p['pokemon_id']
             if args.china:
                 p['latitude'], p['longitude'] = \
                     transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
@@ -116,8 +118,8 @@ def parse_map(map_dict, iteration_num, step, step_location):
             d_t = datetime.utcfromtimestamp(
                 (p['last_modified_timestamp_ms'] +
                  p['time_till_hidden_ms']) / 1000.0)
+            d_t = d_t + timedelta(hours=2)
             printPokemon(p['pokemon_data']['pokemon_id'],p['latitude'],p['longitude'],d_t)
-            outputToSlack(p['pokemon_data']['pokemon_id'],p['encounter_id'],p['latitude'],p['longitude'],d_t)
             pokemons[p['encounter_id']] = {
                 'encounter_id': b64encode(str(p['encounter_id'])),
                 'spawnpoint_id': p['spawnpoint_id'],
@@ -126,6 +128,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                 'longitude': p['longitude'],
                 'disappear_time': d_t
             }
+            outputToSlack(p['pokemon_data']['pokemon_id'],pokemons[p['encounter_id']]['encounter_id'], enc_ids, p['latitude'],p['longitude'],d_t)
 
         if iteration_num > 0 or step > 50:
             for f in cell.get('forts', []):
