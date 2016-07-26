@@ -3,9 +3,13 @@ from pogom.utils import get_args
 from datetime import datetime, timedelta
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 
-import httplib
-import urllib
+#import httplib
+#import urllib
 import json
+import logging
+import requests
+
+logger = logging.getLogger(__name__)
 
 args = get_args()
 
@@ -52,7 +56,7 @@ def calculate_initial_compass_bearing(latd1, lond1, latd2, lond2):
  
 def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
 
-    if itime < (datetime.now() - timedelta(hours=2)):
+    if itime < datetime.utcnow():
         return
 
     slack_webhook_urlpath = str(args.slack_webhook)
@@ -61,7 +65,10 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
         if pokemon_name.lower() in ignore or id in ignore:
             return
 
+    #print encounter_id
+    #print enc_ids
     if encounter_id in enc_ids.keys():
+        logger.info('already sent this pokemon to slack')
         return
             
     if args.pokemon_icons != ':pokeball:':
@@ -81,7 +88,7 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
         compass_text = "Zuid-Oost"
     else: compass_text = "Noord-Oost"
     
-    time_till_disappears = itime - datetime.now() - timedelta(hours=2)
+    time_till_disappears = itime - datetime.utcnow()
     disappear_hours, disappear_remainder = divmod(time_till_disappears.seconds, 3600)
     disappear_minutes, disappear_seconds = divmod(disappear_remainder, 60)
     disappear_minutes = str(disappear_minutes)
@@ -89,9 +96,9 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
     if len(disappear_seconds) == 1:
         disappear_seconds = str(0) + disappear_seconds
     disappear_time = itime.strftime("%H:%M:%S")
-    url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + str(lat) + "," + str(lng)
-    response = urllib.urlopen(url)
-    loc_dic = json.loads(response.read())
+    #url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + str(lat) + "," + str(lng)
+    #response = urllib.urlopen(url)
+    #loc_dic = json.loads(response.read())
     #print loc_dic
     #print loc_dic['results'][0]['address_components'][1]['long_name']
     text = "<http://maps.google.com/maps?q=loc:" + str(lat) + "," + str(lng) + \
@@ -99,17 +106,22 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
             " m> afstand tot basiliek, in richting " + compass_text + ", tot: " + disappear_time + \
             " (" + disappear_minutes + ":" + disappear_seconds + ")!"
             
-    data = urllib.urlencode({'payload': '{"username": "' + pokemon_name + '", '
-                                        '"icon_emoji": "' + user_icon + '", '
-                                        '"text": "' + text + '"}'
-                             })
+    payload = {"username": pokemon_name,
+              "icon_emoji": user_icon,
+              "text": text
+    }
 
-    h = httplib.HTTPSConnection('hooks.slack.com')
-    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+    #h = httplib.HTTPSConnection('hooks.slack.com')
+    #headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 
-    h.request('POST', slack_webhook_urlpath, data, headers)
-    r = h.getresponse()
-    ack = r.read()
+    #h.request('POST', slack_webhook_urlpath, data, headers)
+    #r = h.getresponse()
+    #ack = r.read()
+    
+    webhook = "https://hooks.slack.com" + slack_webhook_urlpath
+    s = json.dumps(payload)
+    r = requests.post(webhook, data=s)
+    logger.info('slack post result: %s, %s', r.status_code, r.reason)
     
     
             #"| " + loc_dic['results'][0]['address_components'][1]['long_name'] + \
