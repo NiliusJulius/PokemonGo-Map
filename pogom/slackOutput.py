@@ -101,6 +101,7 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
     disappear_seconds = str(disappear_seconds)
     if len(disappear_seconds) == 1:
         disappear_seconds = str(0) + disappear_seconds
+    itime = itime + timedelta(hours=2)
     disappear_time = itime.strftime("%H:%M:%S")
     #url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + str(lat) + "," + str(lng)
     #response = urllib.urlopen(url)
