@@ -125,9 +125,9 @@ function initSidebar() {
     $('#scanned-switch').prop('checked', localStorage.showScanned === 'true');
     $('#sound-switch').prop('checked', localStorage.playSound === 'true');
 
-    //var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
+    var searchBox = new google.maps.places.SearchBox(document.getElementById('next-location'));
 
-    /*searchBox.addListener('places_changed', function() {
+    searchBox.addListener('places_changed', function() {
         var places = searchBox.getPlaces();
 
         if (places.length == 0) {
@@ -140,7 +140,7 @@ function initSidebar() {
             map.setCenter(loc);
             marker.setPosition(loc);
         });
-    });*/
+    });
 }
 
 var pad = function (number) { return number <= 99 ? ("0" + number).slice(-2) : number; }
