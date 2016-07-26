@@ -8,6 +8,7 @@ from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import json
 import logging
 import requests
+from pokedata import Pokedata
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +58,11 @@ def calculate_initial_compass_bearing(latd1, lond1, latd2, lond2):
 def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
 
     if itime < datetime.utcnow():
+        return
+        
+    pokedata = Pokedata.get(id)
+    if pokedata['rarity'] <= args.rarity_limit:
+        logger.info('Rarity not high enough')
         return
 
     slack_webhook_urlpath = str(args.slack_webhook)

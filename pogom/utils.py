@@ -57,6 +57,7 @@ def get_args():
     parser.add_argument('-C', '--cors', help='Enable CORS on web server', action='store_true', default=False)
     parser.add_argument('-D', '--db', help='Database filename', default='pogom.db')
     parser.add_argument('-t', '--threads', help='Number of search threads', required=False, type=int, default=5, dest='num_threads')
+    parser.add_argument('-r', '--rarity-limit', help='Rarity limit for pokemon to show', required=False, type=int, default=0)
     parser.add_argument('-sw', '--slack-webhook', help='slack webhook urlpath /services/.../../...', required=True)
     parser.add_argument(
         '-pi',

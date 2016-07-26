@@ -45,18 +45,15 @@ class Pokemon(BaseModel):
 
     @classmethod
     def get_active(cls):
-        #print "OKOKOKOK"
         query = (Pokemon
                  .select()
                  .where(Pokemon.disappear_time > datetime.utcnow())
                  .dicts())
 
         pokemons = []
-        #print "JAJAJAJAJAJAJAJAJAJAJAJAJAJAJAJA"
         for p in query:
             p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
-            #enc_ids[p['encounter_id']] = p['pokemon_id']
-            #print "putting into enc_ids"
+            enc_ids[p['encounter_id']] = p['pokemon_id']
             if args.china:
                 p['latitude'], p['longitude'] = \
                     transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
@@ -130,6 +127,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                 'longitude': p['longitude'],
                 'disappear_time': d_t
             }
+            Pokemon.get_active()
             outputToSlack(p['pokemon_data']['pokemon_id'],pokemons[p['encounter_id']]['encounter_id'], enc_ids, p['latitude'],p['longitude'],d_t)
             
 
