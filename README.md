@@ -15,10 +15,10 @@ In addition to the main setup you will need a few extra parameters:
 -r (set the rarity level of pokemon it should send to slack. You can change the rarity of pokemon in pokedata.csv)  
 -pi (by default it will show a pokeball emoji in slack. If you want to display the corresponding pokemon emoji instead, use -pi ":")  
 
+
 In order to get the pokemon-emojis working you will need to ad them to the emojis list in slack. You can the the emojis here:  
 https://github.com/Templarian/slack-emoji-pokemon  
 if you use the emojis with pokemon- in front of the pokemon name you should use the parameter -pi ":pokemon-". Otherwise you should use -pi ":".
-
 
 ## Warnings
 
