@@ -23,6 +23,9 @@
       "description": "The number of steps to take.",
       "value": "5"
     },
+    "SLACK_WEBHOOK": {
+      "description": "The slack webhook starting from services(e.g. /services/YOURHOOKHERE)"
+    },
     "EXTRA_ARGS": {
       "description": "Any extra arguments that you want to pass to runserver.py.",
       "required": false
