@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from .utils import get_pokemon_name
 from pogom.utils import get_args
 from datetime import datetime, timedelta
@@ -78,9 +81,9 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
         return
     
     pokename = pokemon_name
-    if pokename.lower() == "nidoran♂":
+    if pokename.lower() == "nidoran\u2640":
         pokename == "nidoranm"
-    elif pokename.lower() == "nidoran♀":
+    elif pokename.lower() == "nidoran\u2642":
         pokename == "nidoranf"
     elif pokename.lower() == "mr.mime":
         pokename == "mrmime"
@@ -115,7 +118,7 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
     #loc_dic = json.loads(response.read())
     #print loc_dic
     #print loc_dic['results'][0]['address_components'][1]['long_name']
-    text = pokemon_name"<http://maps.apple.com/?q=" + str(lat) + "," + str(lng) + \
+    text = pokemon_name + "<http://maps.apple.com/?q=" + str(lat) + "," + str(lng) + \
             "|" + '{0:.2f}'.format(distance) + \
             " m> afstand tot basiliek, in richting " + compass_text + ", tot: " + disappear_time + \
             " (" + disappear_minutes + ":" + disappear_seconds + ")!"
