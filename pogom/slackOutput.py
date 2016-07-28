@@ -76,9 +76,16 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
     if encounter_id in enc_ids.keys():
         logger.info('already sent this pokemon to slack')
         return
-            
+    
+    pokename = pokemon_name
+    if pokename.lower() == "nidoran♂":
+        pokename == "nidoranm"
+    elif pokename.lower() == "nidoran♀":
+        pokename == "nidoranf"
+    elif pokename.lower() == "mr.mime":
+        pokename == "mrmime"
     if args.pokemon_icons != ':pokeball:':
-        user_icon = args.pokemon_icons + pokemon_name.lower() + ':'
+        user_icon = args.pokemon_icons + pokename + ':'
     else:
         user_icon = ':pokeball:'
     
@@ -108,7 +115,7 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
     #loc_dic = json.loads(response.read())
     #print loc_dic
     #print loc_dic['results'][0]['address_components'][1]['long_name']
-    text = "<http://maps.google.com/maps?q=loc:" + str(lat) + "," + str(lng) + \
+    text = pokemon_name"<http://maps.apple.com/?q=" + str(lat) + "," + str(lng) + \
             "|" + '{0:.2f}'.format(distance) + \
             " m> afstand tot basiliek, in richting " + compass_text + ", tot: " + disappear_time + \
             " (" + disappear_minutes + ":" + disappear_seconds + ")!"
