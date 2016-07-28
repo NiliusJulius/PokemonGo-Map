@@ -242,7 +242,7 @@ def parse_map(map_dict, iteration_num, step, step_location):
                     'longitude': p['longitude'],
                     'disappear_time': d_t
                 }
-                Pokemon.get_active()
+                Pokemon.get_active(None, None, None, None)
                 outputToSlack(p['pokemon_data']['pokemon_id'],pokemons[p['encounter_id']]['encounter_id'], enc_ids, p['latitude'],p['longitude'],d_t)
 
         if iteration_num > 0 or step > 50:
