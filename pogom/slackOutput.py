@@ -6,6 +6,8 @@ from pogom.utils import get_args
 from datetime import datetime, timedelta
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 
+from pogom.pgoapi.utilities import get_pos_by_name
+
 #import httplib
 #import urllib
 import json
@@ -92,7 +94,7 @@ def outputToSlack(id,encounter_id, enc_ids, lat,lng,itime):
     else:
         user_icon = ':pokeball:'
     
-    loc = [l.strip() for l in args.location.split(',')]
+    loc = get_pos_by_name(args.location)
     distance = lonlat_to_meters(float(loc[0]), float(loc[1]), lat, lng)
     compass = calculate_initial_compass_bearing(float(loc[0]), float(loc[1]), lat, lng)
     compass_text = ""
