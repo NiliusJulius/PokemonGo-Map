@@ -1062,14 +1062,14 @@ function addMyLocationButton() {
   });
   locationMarker.setVisible(false);
 
-  myLocationButton(map, locationMarker);
+  /*myLocationButton(map, locationMarker);*/
 
-  google.maps.event.addListener(map, 'dragend', function() {
+  /*google.maps.event.addListener(map, 'dragend', function() {
     var currentLocation = document.getElementById('current-location');
     currentLocation.style.backgroundPosition = '0px 0px';
     locationMarker.setOptions({
       'opacity': 0.5
-    });
+    });*/
   });
 }
 
